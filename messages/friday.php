@@ -9,12 +9,6 @@ $message = <<<HTML
 HTML;
 
 return [
-    'due' => function() {
-        $currentDay = date('l'); // Full day name (e.g., 'Friday')
-        $currentTime = date('H:i');
-
-        // Send on Friday at 12:00 (noon)
-        return $currentDay === 'Friday' && $currentTime === '12:00';
-    },
+    'due' => fn () => date('l') === 'Friday' && date('h:i a') === '12:00 pm',
     'message' => $message,
 ];

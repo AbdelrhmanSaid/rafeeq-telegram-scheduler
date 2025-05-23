@@ -11,9 +11,6 @@ $message = <<<HTML
 HTML;
 
 return [
-    'due' => function () {
-        $currentTime = date('H:i');
-        return $currentTime === '04:30';
-    },
+    'due' => fn () => date('h:i a') === '4:30 am',
     'message' => $message,
 ];
