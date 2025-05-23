@@ -1,18 +1,16 @@
 <?php
 
-$messages = glob(__DIR__ . '/messages/*.html');
-$messages = array_map(function ($message) {
-    return basename($message, '.html');
-}, $messages);
+// Load all PHP message files
+$messageFiles = glob(__DIR__ . '/messages/*.php');
+$messages = [];
 
-$schedule = [];
-foreach ($messages as $message) {
-    $time = str_replace(['-', '.html'], '', $message);
-    $schedule[$time] = file_get_contents(__DIR__ . "/messages/{$message}.html");
+foreach ($messageFiles as $file) {
+    $messageConfig = require $file;
+    $messages[] = $messageConfig;
 }
 
 return [
     'bot_token' => 'YOUR_BOT_TOKEN_HERE',
     'chat_id' => 'YOUR_CHAT_ID_HERE',
-    'schedule' => $schedule,
+    'messages' => $messages,
 ];

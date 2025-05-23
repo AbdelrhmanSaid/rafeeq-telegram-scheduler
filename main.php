@@ -35,40 +35,47 @@ function sendTelegramMessage($botToken, $chatId, $message)
 }
 
 /**
- * Check if a message should be sent based on the current time
+ * Check if any message should be sent based on their due callable functions
  *
- * @param array $schedule The schedule of messages to send
- * @return string|false The message to send or false if no message should be sent
+ * @param array $messages Array of message configurations with 'due' callable and 'message' properties
+ * @return array|false Array with messages to send or false if no messages should be sent
  */
-function shouldSendMessage($schedule)
+function getMessagesToSend($messages)
 {
-    $currentTime = strtolower(date('h-i-a'));
+    $messagesToSend = [];
 
-    foreach ($schedule as $time => $message) {
-        if ($time === $currentTime) {
-            return $message;
+    foreach ($messages as $messageConfig) {
+        if (isset($messageConfig['due']) && is_callable($messageConfig['due'])) {
+            $dueFunction = $messageConfig['due'];
+            
+            // Call the due function to check if message should be sent
+            if ($dueFunction()) {
+                $messagesToSend[] = $messageConfig['message'];
+            }
         }
     }
 
-    return false;
+    return empty($messagesToSend) ? false : $messagesToSend;
 }
 
-$messageToSend = shouldSendMessage($config['schedule']);
+$messagesToSend = getMessagesToSend($config['messages']);
 
-if ($messageToSend) {
-    $result = sendTelegramMessage(
-        $config['bot_token'],
-        $config['chat_id'],
-        $messageToSend
-    );
+if ($messagesToSend) {
+    foreach ($messagesToSend as $message) {
+        $result = sendTelegramMessage(
+            $config['bot_token'],
+            $config['chat_id'],
+            $message
+        );
 
-    file_put_contents(
-        __DIR__ . '/logs.txt',
-        date('Y-m-d H:i:s') . " - Message sent: {$messageToSend}, Result: {$result}\n",
-        FILE_APPEND
-    );
+        file_put_contents(
+            __DIR__ . '/logs.txt',
+            date('Y-m-d H:i:s') . " - Message sent: " . substr($message, 0, 50) . "..., Result: {$result}\n",
+            FILE_APPEND
+        );
 
-    echo "Message sent successfully!\n";
+        echo "Message sent successfully!\n";
+    }
 } else {
-    echo "No messages scheduled for current time.\n";
+    echo "No messages due for current time.\n";
 }
