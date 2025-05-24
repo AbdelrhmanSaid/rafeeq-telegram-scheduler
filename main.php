@@ -2,6 +2,12 @@
 
 date_default_timezone_set('Africa/Cairo');
 
+// Load all utils
+foreach (glob(__DIR__ . '/utils/*.php') as $file) {
+    require_once $file;
+}
+
+// Load the config
 $config = require_once __DIR__ . '/config.php';
 
 /**
