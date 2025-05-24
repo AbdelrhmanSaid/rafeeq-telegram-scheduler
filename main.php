@@ -46,13 +46,13 @@ function getMessagesToSend($messages)
 {
     $messagesToSend = [];
 
-    foreach ($messages as $messageConfig) {
-        if (isset($messageConfig['due']) && is_callable($messageConfig['due'])) {
-            $dueFunction = $messageConfig['due'];
+    foreach ($messages as $message) {
+        if (isset($message['due']) && is_callable($message['due'])) {
+            $dueFunction = $message['due'];
             
             // Call the due function to check if message should be sent
             if ($dueFunction()) {
-                $messagesToSend[] = $messageConfig['message'];
+                $messagesToSend[] = $message;
             }
         }
     }
@@ -64,11 +64,22 @@ $messagesToSend = getMessagesToSend($config['messages']);
 
 if ($messagesToSend) {
     foreach ($messagesToSend as $message) {
+        // Check if the defintion has "before" callable function
+        if (isset($message['before']) && is_callable($message['before'])) {
+            call_user_func($message['before']);
+        }
+
+        // Send the message
         $result = sendTelegramMessage(
             $config['bot_token'],
             $config['chat_id'],
-            $message
+            $message['message']
         );
+
+        // Check if the defintion has "after" callable function
+        if (isset($message['after']) && is_callable($message['after'])) {
+            call_user_func($message['after']);
+        }
 
         file_put_contents(
             __DIR__ . '/logs.txt',
