@@ -11,6 +11,6 @@ $message = <<<HTML
 HTML;
 
 return [
-    'due' => fn () => date('h:i a') === '7:30 pm',
+    'due' => fn () => _date('h:i a') === '7:30 pm',
     'message' => $message,
 ];

@@ -7,6 +7,6 @@ $message = <<<HTML
 HTML;
 
 return [
-    'due' => fn () => date('l') === 'Sunday' && date('h:i a') === '10:00 pm',
+    'due' => fn () => _date('l') === 'Sunday' && _date('h:i a') === '10:00 pm',
     'message' => $message,
-]; 
+];
