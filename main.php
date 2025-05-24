@@ -21,19 +21,19 @@ foreach (glob(__DIR__ . '/utils/*.php') as $file) {
 
 // Get all messages that should be sent
 $messagesToSend = [];
-foreach ($config['messages'] as $message) {
+foreach ($config['messages'] as $key => $message) {
     if (isset($message['due']) && is_callable($message['due'])) {
         $dueFunction = $message['due'];
 
         // Call the due function to check if message should be sent
         if ($dueFunction($timetamp)) {
-            $messagesToSend[] = $message;
+            $messagesToSend[$key] = $message;
         }
     }
 }
 
 // Send all messages that should be sent
-foreach ($messagesToSend as $message) {
+foreach ($messagesToSend as $key => $message) {
     // Check if the defintion has "before" callable function
     if (isset($message['before']) && is_callable($message['before'])) {
         call_user_func($message['before']);
@@ -47,10 +47,11 @@ foreach ($messagesToSend as $message) {
         call_user_func($message['after']);
     }
 
+    // Prepare the log message
+    $status = $result['ok'] ? 'Success' : 'Failed';
+    $error = $result['error_code'] ?? 'N/A';
+    $logMessage = sprintf('[%s] Message: %s, Status: %s, Error: %s', date('Y-m-d H:i:s'), $key, $status, $error);
+
     // Log the result
-    file_put_contents(
-        __DIR__ . '/logs.txt',
-        date('Y-m-d H:i:s') . " - Message sent: " . substr($message, 0, 50) . "..., Result: {$result}\n",
-        FILE_APPEND
-    );
+    file_put_contents(__DIR__ . '/logs.txt', $logMessage . "\n", FILE_APPEND);
 }
