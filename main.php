@@ -32,9 +32,6 @@ foreach ($config['messages'] as $key => $message) {
     }
 }
 
-// Log the number of messages to send
-logMessage(true, sprintf('Found %d messages to send', count($messagesToSend)));
-
 // Send all messages that should be sent
 foreach ($messagesToSend as $key => $message) {
     // Check if the defintion has "before" callable function
