@@ -6,7 +6,9 @@ $messages = [];
 
 foreach ($messageFiles as $file) {
     $messageConfig = require $file;
-    $messages[] = $messageConfig;
+
+    $key = basename($file, '.php');
+    $messages[$key] = $messageConfig;
 }
 
 return [

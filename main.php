@@ -32,6 +32,9 @@ foreach ($config['messages'] as $key => $message) {
     }
 }
 
+// Log the number of messages to send
+logMessage(true, sprintf('Found %d messages to send', count($messagesToSend)));
+
 // Send all messages that should be sent
 foreach ($messagesToSend as $key => $message) {
     // Check if the defintion has "before" callable function
@@ -48,10 +51,9 @@ foreach ($messagesToSend as $key => $message) {
     }
 
     // Prepare the log message
-    $status = $result['ok'] ? 'Success' : 'Failed';
-    $error = $result['error_code'] ?? 'N/A';
-    $logMessage = sprintf('[%s] Message: %s, Status: %s, Error: %s', date('Y-m-d H:i:s'), $key, $status, $error);
+    $success = $result['ok'] == true;
+    $message = $success ? sprintf('Message "%s" sent successfully', $key) : sprintf('Message "%s" failed to send, error: %s', $key, $result['error_code']);
 
     // Log the result
-    file_put_contents(__DIR__ . '/logs.txt', $logMessage . "\n", FILE_APPEND);
+    logMessage($success, $message);
 }
