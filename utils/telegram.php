@@ -11,8 +11,8 @@ function sendTelegramMessage($message, $options = [])
 {
     global $config;
 
-    $chatId = $config['telegram']['chat_id'];
-    $botToken = $config['telegram']['bot_token'];
+    $chatId = $config['chat_id'];
+    $botToken = $config['bot_token'];
 
     $url = "https://api.telegram.org/bot{$botToken}/sendMessage";
 
