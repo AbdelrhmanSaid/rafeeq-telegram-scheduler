@@ -6,9 +6,9 @@
  * @param string $format The format of the date
  * @return string The current date
  */
-function _date($format)
+function _date(string $format): string
 {
-    global $timetamp;
+    global $timestamp;
 
-    return date($format, $timetamp);
+    return date($format, $timestamp);
 }

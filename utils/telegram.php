@@ -5,16 +5,16 @@
  *
  * @param string $message The message to send
  * @param array $options The options to send
- * @return string The result of the message send
+ * @return array The result of the message send
  */
-function sendTelegramMessage($message, $options = [])
+function sendTelegramMessage(string $message, array $options = []): array
 {
     global $config;
 
     $chatId = $config['chat_id'];
     $botToken = $config['bot_token'];
 
-    $url = "https://api.telegram.org/bot{$botToken}/sendMessage";
+    $url = "https://api.telegram.org/bot$botToken/sendMessage";
 
     $data = array_merge($options, [
         'chat_id' => $chatId,
@@ -33,7 +33,5 @@ function sendTelegramMessage($message, $options = [])
     $context = stream_context_create($options);
     $result = file_get_contents($url, false, $context);
 
-    $result = json_decode($result, true);
-
-    return $result;
+    return json_decode($result, true);
 }

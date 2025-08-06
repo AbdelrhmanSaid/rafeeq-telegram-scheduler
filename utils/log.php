@@ -7,7 +7,7 @@
  * @param string $message
  * @return void
  */
-function logMessage($success, $message) {
+function logMessage(bool $success, string $message): void {
     $file = dirname(__DIR__) . '/logs.txt';
 
     $logMessage = sprintf('[%s] Status: %s, Message: %s', date('Y-m-d H:i:s'), $success ? 'Success' : 'Failed', $message);

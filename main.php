@@ -9,7 +9,7 @@ date_default_timezone_set('Africa/Cairo');
 
 // Persist the timestamp to make sure all the functions are relative to the current
 // time, so long-running scripts are not affected by the time difference
-$timetamp = time();
+$timestamp = time();
 
 // Load the config file
 $config = require_once __DIR__ . '/config.php';
@@ -26,7 +26,7 @@ foreach ($config['messages'] as $key => $message) {
         $dueFunction = $message['due'];
 
         // Call the due function to check if message should be sent
-        if ($dueFunction($timetamp)) {
+        if ($dueFunction($timestamp)) {
             $messagesToSend[$key] = $message;
         }
     }
@@ -34,7 +34,7 @@ foreach ($config['messages'] as $key => $message) {
 
 // Send all messages that should be sent
 foreach ($messagesToSend as $key => $message) {
-    // Check if the defintion has "before" callable function
+    // Check if the definition has "before" callable function
     if (isset($message['before']) && is_callable($message['before'])) {
         call_user_func($message['before']);
     }
@@ -42,7 +42,7 @@ foreach ($messagesToSend as $key => $message) {
     // Send the message
     $result = sendTelegramMessage($message['message']);
 
-    // Check if the defintion has "after" callable function
+    // Check if the definition has "after" callable function
     if (isset($message['after']) && is_callable($message['after'])) {
         call_user_func($message['after']);
     }
