@@ -7,7 +7,7 @@ $message = <<<HTML
 
 إقرأ الآن أذكار المساء من هنا 👇
 
-<a href="https://www.rafeeq.me/azkar/2">https://www.rafeeq.me/azkar/2</a>
+<a href="https://www.rafeeq.me/azkar/evening">https://www.rafeeq.me/azkar/evening</a>
 HTML;
 
 return [
