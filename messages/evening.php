@@ -11,6 +11,11 @@ $message = <<<HTML
 HTML;
 
 return [
-    'due' => fn () => _date('h:i a') === '07:30 pm',
+    'due' => function () {
+        $maghrib = getPrayerTimes()['Maghrib'];
+        $notification = strtotime('-1 hour', strtotime($maghrib));
+
+        return _date('H:i', $notification) === _date('H:i');
+    },
     'message' => $message,
 ];
