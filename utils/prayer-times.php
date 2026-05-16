@@ -10,7 +10,7 @@
  */
 function getPrayerTimes(string $city = 'Cairo', string $country = 'EG', ?string $date = null): array
 {
-    $date = $date ?? _date('Y-m-d');
+    $date = $date ?? _date('d-m-Y');
     $endpoint = "https://api.aladhan.com/v1/timingsByCity/$date?city=$city&country=$country";
     $cacheFile = dirname(__DIR__) . '/cache/prayer-times.json';
 
