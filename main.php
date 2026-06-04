@@ -34,23 +34,22 @@ foreach ($config['messages'] as $key => $message) {
 
 // Send all messages that should be sent
 foreach ($messagesToSend as $key => $message) {
-    // Check if the definition has "before" callable function
-    if (isset($message['before']) && is_callable($message['before'])) {
-        call_user_func($message['before']);
+    try {
+        // Check if the definition has "before" callable function
+        if (isset($message['before']) && is_callable($message['before'])) {
+            call_user_func($message['before']);
+        }
+
+        // Send the message
+        sendTelegramMessage($message['message']);
+
+        // Check if the definition has "after" callable function
+        if (isset($message['after']) && is_callable($message['after'])) {
+            call_user_func($message['after']);
+        }
+
+        logMessage(true, sprintf('Message "%s" sent successfully', $key));
+    } catch (Exception $e) {
+        logMessage(false, sprintf('Message "%s" failed to send, error: %s', $key, $e->getMessage()));
     }
-
-    // Send the message
-    $result = sendTelegramMessage($message['message']);
-
-    // Check if the definition has "after" callable function
-    if (isset($message['after']) && is_callable($message['after'])) {
-        call_user_func($message['after']);
-    }
-
-    // Prepare the log message
-    $success = $result['ok'] == true;
-    $message = $success ? sprintf('Message "%s" sent successfully', $key) : sprintf('Message "%s" failed to send, error: %s', $key, $result['error_code']);
-
-    // Log the result
-    logMessage($success, $message);
 }

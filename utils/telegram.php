@@ -6,6 +6,7 @@
  * @param string $message The message to send
  * @param array $options The options to send
  * @return array The result of the message send
+ * @throws RuntimeException If the request fails or Telegram returns an error
  */
 function sendTelegramMessage(string $message, array $options = []): array
 {
@@ -22,7 +23,7 @@ function sendTelegramMessage(string $message, array $options = []): array
         'parse_mode' => 'HTML'
     ]);
 
-    $options = [
+    $httpOptions = [
         'http' => [
             'header' => "Content-Type: application/x-www-form-urlencoded",
             'method' => 'POST',
@@ -30,8 +31,26 @@ function sendTelegramMessage(string $message, array $options = []): array
         ],
     ];
 
-    $context = stream_context_create($options);
-    $result = file_get_contents($url, false, $context);
+    $context = stream_context_create($httpOptions);
+    $response = file_get_contents($url, false, $context);
 
-    return json_decode($result, true);
+    if ($response === false) {
+        $error = error_get_last();
+        $message = $error['message'] ?? 'Unknown HTTP error';
+        throw new RuntimeException("Failed to send Telegram message: $message");
+    }
+
+    $result = json_decode($response, true);
+
+    if (!is_array($result)) {
+        throw new RuntimeException('Failed to send Telegram message: invalid JSON response');
+    }
+
+    if (empty($result['ok'])) {
+        $code = $result['error_code'] ?? 'unknown';
+        $description = $result['description'] ?? 'unknown error';
+        throw new RuntimeException("Telegram API error ($code): $description");
+    }
+
+    return $result;
 }

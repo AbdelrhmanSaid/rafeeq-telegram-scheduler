@@ -16,7 +16,7 @@ function getPrayerTimes(string $city = 'Cairo', string $country = 'EG', ?string 
 
     if (file_exists($cacheFile)) {
         $cache = json_decode(file_get_contents($cacheFile), true);
-        if ($cache['date'] === $date) {
+        if ($cache['date'] === $date && $cache['timings'] !== null) {
             return $cache['timings'];
         }
     }
@@ -24,6 +24,10 @@ function getPrayerTimes(string $city = 'Cairo', string $country = 'EG', ?string 
     $response = file_get_contents($endpoint);
     $data = json_decode($response, true);
     $timings = $data['data']['timings'];
+
+    if ($timings === null) {
+        throw new Exception('Failed to get prayer times');
+    }
 
     $cache = [
         'date' => $date,
