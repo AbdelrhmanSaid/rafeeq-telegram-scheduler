@@ -11,8 +11,9 @@ date_default_timezone_set('Africa/Cairo');
 // time, so long-running scripts are not affected by the time difference
 $timestamp = time();
 
-// Load the config file
+// Load the config and messages
 $config = require_once __DIR__ . '/config.php';
+$messages = require_once __DIR__ . '/messages.php';
 
 // Load all utils files
 foreach (glob(__DIR__ . '/utils/*.php') as $file) {
@@ -21,7 +22,7 @@ foreach (glob(__DIR__ . '/utils/*.php') as $file) {
 
 // Get all messages that should be sent
 $messagesToSend = [];
-foreach ($config['messages'] as $key => $message) {
+foreach ($messages as $key => $message) {
     if (isset($message['due']) && is_callable($message['due'])) {
         $dueFunction = $message['due'];
 

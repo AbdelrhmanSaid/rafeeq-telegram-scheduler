@@ -17,7 +17,7 @@ return [
 
 ## Configuration
 
-1. Copy your bot token and chat ID to `config.php`
+1. Copy `config.example.php` to `config.php` and set your bot token and chat ID
 2. Add your message files to the `messages/` directory
 3. Run `php main.php` to check and send due messages
 
