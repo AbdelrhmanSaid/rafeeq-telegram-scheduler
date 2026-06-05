@@ -1,5 +1,7 @@
 <?php
 
+$config = [];
+
 /**
  * Send a message to a Telegram chat
  *
@@ -23,21 +25,18 @@ function sendTelegramMessage(string $message, array $options = []): array
         'parse_mode' => 'HTML'
     ]);
 
-    $httpOptions = [
-        'http' => [
-            'header' => "Content-Type: application/x-www-form-urlencoded",
-            'method' => 'POST',
-            'content' => http_build_query($data)
-        ],
-    ];
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
 
-    $context = stream_context_create($httpOptions);
-    $response = file_get_contents($url, false, $context);
+    $response = curl_exec($ch);
 
     if ($response === false) {
-        $error = error_get_last();
-        $message = $error['message'] ?? 'Unknown HTTP error';
-        throw new RuntimeException("Failed to send Telegram message: $message");
+        $err = curl_error($ch);
+        throw new RuntimeException("Failed to send Telegram message: $err");
     }
 
     $result = json_decode($response, true);
