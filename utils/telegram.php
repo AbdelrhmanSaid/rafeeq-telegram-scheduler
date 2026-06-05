@@ -1,7 +1,5 @@
 <?php
 
-$config = [];
-
 /**
  * Send a message to a Telegram chat
  *
