@@ -35,22 +35,30 @@ foreach ($messages as $key => $message) {
 
 // Send all messages that should be sent
 foreach ($messagesToSend as $key => $message) {
-    try {
-        // Check if the definition has "before" callable function
-        if (isset($message['before']) && is_callable($message['before'])) {
-            call_user_func($message['before']);
+    $channels = is_array($message['channels']) ? $message['channels'] : [$message['channels']];
+
+    foreach ($channels as $channel) {
+        try {
+            // Check if the definition has "before" callable function
+            if (isset($message['before']) && is_callable($message['before'])) {
+                call_user_func($message['before']);
+            }
+
+            // Send the message
+            match ($channel) {
+                'telegram' => sendTelegramMessage($message['title'], $message['message']),
+                'onesignal' => sendOneSignalMessage($message['title'], $message['message']),
+                default => throw new Exception('Invalid channel'),
+            };
+
+            // Check if the definition has "after" callable function
+            if (isset($message['after']) && is_callable($message['after'])) {
+                call_user_func($message['after']);
+            }
+
+            logMessage(true, sprintf('Message "%s" sent successfully', $key));
+        } catch (Exception $e) {
+            logMessage(false, sprintf('Message "%s" failed to send, error: %s', $key, $e->getMessage()));
         }
-
-        // Send the message
-        sendTelegramMessage($message['message']);
-
-        // Check if the definition has "after" callable function
-        if (isset($message['after']) && is_callable($message['after'])) {
-            call_user_func($message['after']);
-        }
-
-        logMessage(true, sprintf('Message "%s" sent successfully', $key));
-    } catch (Exception $e) {
-        logMessage(false, sprintf('Message "%s" failed to send, error: %s', $key, $e->getMessage()));
     }
 }

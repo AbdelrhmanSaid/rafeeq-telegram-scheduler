@@ -3,12 +3,13 @@
 /**
  * Send a message to a Telegram chat
  *
+ * @param string $title The message title
  * @param string $message The message to send
  * @param array $options The options to send
  * @return array The result of the message send
  * @throws RuntimeException If the request fails or Telegram returns an error
  */
-function sendTelegramMessage(string $message, array $options = []): array
+function sendTelegramMessage(string $title, string $message, array $options = []): array
 {
     global $config;
 
@@ -16,10 +17,11 @@ function sendTelegramMessage(string $message, array $options = []): array
     $botToken = $config['bot_token'];
 
     $url = "https://api.telegram.org/bot$botToken/sendMessage";
+    $text = sprintf('%s%s%s', $title, PHP_EOL . PHP_EOL, $message);
 
     $data = array_merge($options, [
         'chat_id' => $chatId,
-        'text' => $message,
+        'text' => $text,
         'parse_mode' => 'HTML'
     ]);
 

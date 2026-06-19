@@ -1,8 +1,6 @@
 <?php
 
 $message = <<<HTML
-✨ أذكار المساء ✨
-
 عن أبي موسى الأشعري رضي الله عنه أن رسول الله صلى الله عليه وسلم، قال: (مثل الذي يذكر ربه والذي لا يذكر ربه، مثل الحيِّ والميت) متفق عليه.
 
 إقرأ الآن أذكار المساء من هنا 👇
@@ -11,6 +9,8 @@ $message = <<<HTML
 HTML;
 
 return [
+    'channels' => ['telegram', 'onesignal'],
+    'title' => '✨ أذكار المساء ✨',
     'due' => function () {
         $maghrib = getPrayerTimes()['Maghrib'];
         $notification = strtotime('-1 hour', strtotime($maghrib));
