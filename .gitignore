@@ -2,3 +2,5 @@ logs.txt
 .idea
 config.php
 cache/
+vendor/
+.phpunit.cache/

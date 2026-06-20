@@ -1,0 +1,31 @@
+{
+    "name": "rafeeq/telegram-scheduler",
+    "description": "A small, extensible PHP scheduler that sends messages to Telegram and OneSignal based on custom due conditions.",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.2",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Rafeeq\\Scheduler\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Rafeeq\\Scheduler\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "schedule": "php bin/scheduler"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
