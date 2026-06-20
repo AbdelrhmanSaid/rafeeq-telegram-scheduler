@@ -3,13 +3,12 @@
 /**
  * Send a push notification to all OneSignal subscribers.
  *
- * @param string $title The notification title to send
- * @param string $message The notification message to send
+ * @param array $message The notification message to send
  * @param array $options Additional OneSignal notification options
  * @return array The decoded OneSignal API response
  * @throws RuntimeException If the request fails or OneSignal returns an error
  */
-function sendOneSignalMessage(string $title, string $message, array $options = []): array
+function sendOneSignalMessage(array $message, array $options = []): array
 {
     global $config;
 
@@ -21,12 +20,17 @@ function sendOneSignalMessage(string $title, string $message, array $options = [
         'app_id' => $appId,
         'included_segments' => ['All'],
         'headings' => [
-            'en' => html_entity_decode(strip_tags($title), ENT_QUOTES, 'UTF-8'),
+            'en' => html_entity_decode(strip_tags($message['title']), ENT_QUOTES, 'UTF-8'),
         ],
         'contents' => [
-            'en' => html_entity_decode(strip_tags($message), ENT_QUOTES, 'UTF-8'),
+            'en' => html_entity_decode(strip_tags($message['message']), ENT_QUOTES, 'UTF-8'),
         ],
     ], $options);
+
+    // Add the url to the data if it exists
+    if (isset($message['url'])) {
+        $data['url'] = $message['url'];
+    }
 
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_POST, true);
